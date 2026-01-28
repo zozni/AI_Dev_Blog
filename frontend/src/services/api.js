@@ -33,4 +33,17 @@ export const tagApi = {
   getAllTags: () => api.get('/tags'),
 };
 
+// 댓글 API
+export const commentApi = {
+  getComments: (postId) => api.get(`/posts/${postId}/comments`),
+  createComment: (postId, commentData) => api.post(`/posts/${postId}/comments`, commentData),
+  deleteComment: (postId, commentId) => api.delete(`/posts/${postId}/comments/${commentId}`),
+};
+
+// 좋아요 API
+export const likeApi = {
+  getLikeInfo: (postId) => api.get(`/posts/${postId}/likes`),
+  toggleLike: (postId) => api.post(`/posts/${postId}/likes`),
+};
+
 export default api;

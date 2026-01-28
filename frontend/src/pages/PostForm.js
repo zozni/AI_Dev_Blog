@@ -68,6 +68,9 @@ function PostForm() {
   };
 
   const handleAddTag = (e) => {
+    // IME 입력 중이면 무시
+    if (e.nativeEvent.isComposing) return;
+    
     if (e.key === 'Enter' && tagInput.trim()) {
       e.preventDefault();
       if (!formData.tags.includes(tagInput.trim())) {
@@ -246,7 +249,7 @@ function PostForm() {
             <div className="tag-container">
               {formData.tags.map((tag, index) => (
                 <span key={index} className="tag-chip">
-                  #{tag}
+                  {tag}
                   <button type="button" onClick={() => handleRemoveTag(tag)}>
                     ✕
                   </button>

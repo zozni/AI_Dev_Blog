@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,9 @@ public class PostResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Integer viewCount;
+    private Integer likeCount;
+    private Boolean isLiked;
+    private List<CommentResponse> comments;
     
     public static PostResponse from(Post post) {
         return PostResponse.builder()
@@ -39,6 +43,13 @@ public class PostResponse {
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .viewCount(post.getViewCount())
+                .likeCount(post.getLikes() != null ? post.getLikes().size() : 0)
+                .isLiked(false)
+                .comments(post.getComments() != null ? 
+                        post.getComments().stream()
+                                .map(CommentResponse::from)
+                                .collect(Collectors.toList()) : 
+                        List.of())
                 .build();
     }
 }

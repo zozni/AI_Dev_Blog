@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { postApi } from '../services/api';
+import { postApi, commentApi, likeApi } from '../services/api';
 import MarkdownViewer from '../components/MarkdownViewer';
 import './PostDetail.css';
 
@@ -9,9 +9,19 @@ function PostDetail() {
   const navigate = useNavigate();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  
+  // 댓글 관련 상태
+  const [comments, setComments] = useState([]);
+  const [commentForm, setCommentForm] = useState({ author: '', content: '' });
+  
+  // 좋아요 관련 상태
+  const [likeInfo, setLikeInfo] = useState({ likeCount: 0, isLiked: false });
 
   useEffect(() => {
     loadPost();
+    loadComments();
+    loadLikeInfo();
   }, [id]);
 
   const loadPost = async () => {
@@ -25,15 +35,69 @@ function PostDetail() {
     }
   };
 
-  const handleDelete = async () => {
-    if (window.confirm('정말 삭제하시겠습니까?')) {
+  const loadComments = async () => {
+    try {
+      const response = await commentApi.getComments(id);
+      setComments(response.data);
+    } catch (error) {
+      console.error('댓글 로딩 실패:', error);
+    }
+  };
+
+  const loadLikeInfo = async () => {
+    try {
+      const response = await likeApi.getLikeInfo(id);
+      setLikeInfo(response.data);
+    } catch (error) {
+      console.error('좋아요 정보 로딩 실패:', error);
+    }
+  };
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    if (!commentForm.author.trim() || !commentForm.content.trim()) {
+      alert('작성자와 내용을 모두 입력하세요.');
+      return;
+    }
+    
+    try {
+      await commentApi.createComment(id, commentForm);
+      setCommentForm({ author: '', content: '' });
+      loadComments();
+    } catch (error) {
+      console.error('댓글 작성 실패:', error);
+      alert('댓글 작성에 실패했습니다.');
+    }
+  };
+
+  const handleCommentDelete = async (commentId) => {
+    if (window.confirm('댓글을 삭제하시겠습니까?')) {
       try {
-        await postApi.deletePost(id);
-        navigate('/');
+        await commentApi.deleteComment(id, commentId);
+        loadComments();
       } catch (error) {
-        console.error('삭제 실패:', error);
-        alert('삭제에 실패했습니다.');
+        console.error('댓글 삭제 실패:', error);
+        alert('댓글 삭제에 실패했습니다.');
       }
+    }
+  };
+
+  const handleLikeToggle = async () => {
+    try {
+      const response = await likeApi.toggleLike(id);
+      setLikeInfo(response.data);
+    } catch (error) {
+      console.error('좋아요 처리 실패:', error);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await postApi.deletePost(id);
+      navigate('/');
+    } catch (error) {
+      console.error('삭제 실패:', error);
+      alert('삭제에 실패했습니다.');
     }
   };
 
@@ -150,8 +214,19 @@ function PostDetail() {
           </div>
 
           {/* Post Actions */}
-          <footer className="article-footer">
-            <div className="action-buttons">
+        <footer className="article-footer">
+          <div className="action-buttons">
+            {/* 좋아요 버튼을 왼쪽에 배치 */}
+            <button 
+              className={`like-button ${likeInfo.isLiked ? 'liked' : ''}`}
+              onClick={handleLikeToggle}
+            >
+              <span className="heart-icon">{likeInfo.isLiked ? '❤️' : '🤍'}</span>
+              <span className="like-count">{likeInfo.likeCount}</span>
+            </button>
+            
+            {/* 오른쪽 버튼들 */}
+            <div className="right-buttons">
               <Link to={`/edit/${post.id}`} className="edit-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -159,7 +234,7 @@ function PostDetail() {
                 </svg>
                 Edit
               </Link>
-              <button onClick={handleDelete} className="delete-btn">
+              <button onClick={() => setShowDeleteModal(true)} className="delete-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <polyline points="3 6 5 6 21 6"></polyline>
                   <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -167,9 +242,71 @@ function PostDetail() {
                 Delete
               </button>
             </div>
-          </footer>
+          </div>
+        </footer>
         </article>
+
+        {/* Comments Section */}
+        <section className="comments-section">
+          <h2 className="comments-title">댓글 {comments.length}</h2>
+          
+          {/* Comment Form */}
+          <form onSubmit={handleCommentSubmit} className="comment-form">
+            <input
+              type="text"
+              placeholder="작성자"
+              value={commentForm.author}
+              onChange={(e) => setCommentForm({ ...commentForm, author: e.target.value })}
+              className="comment-author-input"
+            />
+            <textarea
+              placeholder="댓글을 입력하세요"
+              value={commentForm.content}
+              onChange={(e) => setCommentForm({ ...commentForm, content: e.target.value })}
+              className="comment-content-input"
+              rows="3"
+            />
+            <button type="submit" className="comment-submit-btn">댓글 작성</button>
+          </form>
+
+          {/* Comments List */}
+          <div className="comments-list">
+            {comments.map((comment) => (
+              <div key={comment.id} className="comment-item">
+                <div className="comment-header">
+                  <span className="comment-author">{comment.author}</span>
+                  <span className="comment-date">{formatDate(comment.createdAt)}</span>
+                </div>
+                <p className="comment-content">{comment.content}</p>
+                <button 
+                  onClick={() => handleCommentDelete(comment.id)}
+                  className="comment-delete-btn"
+                >
+                  삭제
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
       </main>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>게시글 삭제</h3>
+            <p>정말 삭제하시겠습니까?</p>
+            <div className="modal-actions">
+              <button onClick={() => setShowDeleteModal(false)} className="cancel-btn">
+                취소
+              </button>
+              <button onClick={handleDelete} className="confirm-btn">
+                삭제
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
