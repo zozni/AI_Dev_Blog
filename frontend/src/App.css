@@ -1,0 +1,318 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-card: #1f2937;
+  --text-primary: #e6edf3;
+  --text-secondary: #9198a1;
+  --text-muted: #6e7681;
+  
+  /* 부드러운 색상 */
+  --accent-cyan: #5DADE2;
+  --accent-pink: #F06292;
+  --accent-yellow: #FFD54F;
+  --accent-green: #66BB6A;
+  --accent-purple: #9575CD;
+  
+  /* 글로우 효과 */
+  --glow-cyan: rgba(93, 173, 226, 0.3);
+  --glow-pink: rgba(240, 98, 146, 0.3);
+  --glow-yellow: rgba(255, 213, 79, 0.3);
+  --glow-green: rgba(102, 187, 106, 0.3);
+  
+  --border-color: #30363d;
+  --border-light: #484f58;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* 배경 패턴 */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(93, 173, 226, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(240, 98, 146, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(149, 117, 205, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.App {
+  min-height: 100vh;
+  padding: 20px 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* 스크롤바 */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--accent-cyan), var(--accent-purple));
+  border-radius: 5px;
+  border: 2px solid var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--accent-pink), var(--accent-yellow));
+}
+
+/* 그라디언트 라인 */
+.gradient-line {
+  height: 3px;
+  background: linear-gradient(90deg, 
+    var(--accent-cyan) 0%, 
+    var(--accent-purple) 25%, 
+    var(--accent-pink) 50%, 
+    var(--accent-yellow) 75%, 
+    var(--accent-green) 100%
+  );
+  border-radius: 10px;
+}
+
+/* 맥북 창 스타일 */
+.window {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.window-header {
+  height: 40px;
+  background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  gap: 8px;
+}
+
+.window-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.window-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.window-dot:hover {
+  transform: scale(1.2);
+}
+
+.dot-close {
+  background: linear-gradient(135deg, #ff5f57 0%, #ff3b30 100%);
+  box-shadow: 0 0 10px rgba(255, 95, 87, 0.4);
+}
+
+.dot-minimize {
+  background: linear-gradient(135deg, #ffbd2e 0%, #ff9500 100%);
+  box-shadow: 0 0 10px rgba(255, 189, 46, 0.4);
+}
+
+.dot-maximize {
+  background: linear-gradient(135deg, #28ca42 0%, #30d158 100%);
+  box-shadow: 0 0 10px rgba(40, 202, 66, 0.4);
+}
+
+.window-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-left: 10px;
+}
+
+.window-content {
+  padding: 25px;
+}
+
+/* 버튼 */
+button, .button {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+  color: white;
+  box-shadow: 0 4px 15px var(--glow-cyan);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px var(--glow-cyan);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+  color: white;
+  box-shadow: 0 4px 15px var(--glow-green);
+}
+
+.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px var(--glow-green);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, var(--accent-pink), #ff6b9d);
+  color: white;
+  box-shadow: 0 4px 15px var(--glow-pink);
+}
+
+.btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px var(--glow-pink);
+}
+
+.btn-secondary {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 20px var(--glow-cyan);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* 입력 필드 */
+input, textarea, select {
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+  padding: 12px 15px;
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 0 3px var(--glow-cyan);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-muted);
+}
+
+/* 뱃지 */
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-cyan {
+  background: linear-gradient(135deg, var(--glow-cyan), transparent);
+  color: var(--accent-cyan);
+  border: 1px solid var(--accent-cyan);
+}
+
+.badge-pink {
+  background: linear-gradient(135deg, var(--glow-pink), transparent);
+  color: var(--accent-pink);
+  border: 1px solid var(--accent-pink);
+}
+
+.badge-green {
+  background: linear-gradient(135deg, var(--glow-green), transparent);
+  color: var(--accent-green);
+  border: 1px solid var(--accent-green);
+}
+
+.badge-purple {
+  background: linear-gradient(135deg, rgba(149, 117, 205, 0.3), transparent);
+  color: var(--accent-purple);
+  border: 1px solid var(--accent-purple);
+}
+
+/* 링크 */
+a {
+  color: var(--accent-cyan);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+a:hover {
+  color: var(--accent-purple);
+  text-shadow: 0 0 10px var(--glow-cyan);
+}
+
+/* 로딩 */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--accent-cyan);
+  font-size: 1.2rem;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.loading::after {
+  content: '●●●';
+  animation: pulse 1.5s ease-in-out infinite;
+  letter-spacing: 3px;
+}
+
+/* 선택 */
+::selection {
+  background: var(--glow-cyan);
+  color: white;
+}
