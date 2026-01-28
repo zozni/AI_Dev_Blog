@@ -241,14 +241,6 @@ services:
 
 ---
 
-## 👤 개발자
-
-**zozni** - AI 학습 여정을 기록하는 개발자
-
-- GitHub: [@zozni](https://github.com/zozni)
-
----
-
 <div align="center">
 
 **⭐ 이 프로젝트가 도움이 되었다면 Star를 눌러주세요!**
