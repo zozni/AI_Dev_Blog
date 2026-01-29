@@ -15,22 +15,22 @@ public class DataInitializer {
             // 카테고리가 비어있을 때만 초기 데이터 생성
             if (categoryRepository.count() == 0) {
                 categoryRepository.save(Category.builder()
-                        .name("용어")
+                        .name("Terminology")
                         .description("AI 관련 용어 설명")
                         .build());
                 
                 categoryRepository.save(Category.builder()
-                        .name("논문")
+                        .name("Paper")
                         .description("논문 리뷰 및 요약")
                         .build());
                 
                 categoryRepository.save(Category.builder()
-                        .name("오류")
+                        .name("Troubleshooting")
                         .description("오류 해결 방법")
                         .build());
                 
                 categoryRepository.save(Category.builder()
-                        .name("기타")
+                        .name("General")
                         .description("기타 주제")
                         .build());
                 
