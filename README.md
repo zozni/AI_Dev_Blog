@@ -180,37 +180,6 @@ npm start
 
 ---
 
-## 🔧 환경 변수 설정
-
-### `backend/src/main/resources/application.yml`
-
-```yaml
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/aiblog
-    username: root
-    password: rootpassword
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-```
-
-### `docker-compose.yml`
-
-```yaml
-services:
-  mysql:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: aiblog
-    ports:
-      - "3306:3306"
-```
-
----
-
 ## 📝 개발 노트
 
 ### 구현 중점 사항
@@ -229,6 +198,11 @@ services:
 - [ ] 다크/라이트 모드 지원
 - [ ] 관리자 대시보드
 - [ ] AI 기능 무수히 추가 예정 🤩
+
+마우스 이쁜걸로 바꾸고 입력할때 팡파레 터지는거 
+펫도 키우자 
+스크롤에 따라서 줌아웃되고 애니메이션 들어가는거.
+방명록도 만들자. 
 
 ---
 
