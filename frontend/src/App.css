@@ -321,3 +321,164 @@ a:hover {
   background: var(--glow-cyan);
   color: white;
 }
+
+/* ========================================
+   커스텀 마우스 커서
+======================================== */
+
+* {
+  cursor: none !important; /* 기본 커서 숨김 */
+}
+
+/* 커스텀 커서 컨테이너 */
+.custom-cursor {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: difference;
+}
+
+/* 메인 커서 (큰 원) */
+.cursor-dot {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--accent-cyan);
+  border-radius: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+  box-shadow: 0 0 20px var(--glow-cyan);
+}
+
+/* 작은 점 */
+.cursor-pointer {
+  width: 8px;
+  height: 8px;
+  background: var(--accent-cyan);
+  border-radius: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px var(--glow-cyan);
+}
+
+/* 호버 시 커서 확대 */
+a:hover ~ .custom-cursor .cursor-dot,
+button:hover ~ .custom-cursor .cursor-dot,
+input:hover ~ .custom-cursor .cursor-dot,
+textarea:hover ~ .custom-cursor .cursor-dot {
+  width: 60px;
+  height: 60px;
+  border-color: var(--accent-green);
+  box-shadow: 0 0 30px var(--glow-green);
+}
+
+/* ========================================
+   타이핑 팡파레 효과
+======================================== */
+
+/* 입력 필드에 애니메이션 추가 */
+@keyframes sparkle {
+  0% {
+    box-shadow: 0 0 0 0 var(--glow-cyan);
+  }
+  50% {
+    box-shadow: 0 0 20px 10px var(--glow-cyan),
+                0 0 40px 20px var(--glow-purple);
+  }
+  100% {
+    box-shadow: 0 0 0 0 var(--glow-cyan);
+  }
+}
+
+/* ========================================
+   타이핑 팡파레 효과 (개선)
+======================================== */
+
+@keyframes sparkle {
+  0% {
+    box-shadow: 0 0 0 0 var(--glow-cyan);
+  }
+  50% {
+    box-shadow: 0 0 20px 10px var(--glow-cyan),
+                0 0 40px 20px var(--glow-purple);
+  }
+  100% {
+    box-shadow: 0 0 0 0 var(--glow-cyan);
+  }
+}
+
+@keyframes confetti {
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--x, 0), var(--y, -100px)) rotate(720deg) scale(0);
+    opacity: 0;
+  }
+}
+
+.typing-active {
+  animation: sparkle 0.6s ease-out !important;
+}
+
+.confetti-particle {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  animation: confetti 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* ========================================
+   클릭 폭죽 효과
+======================================== */
+
+@keyframes firework {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--x, 0), var(--y, 0)) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes burst {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}
+
+.firework-particle {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  animation: firework 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.firework-burst {
+  position: fixed;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid var(--accent-cyan);
+  pointer-events: none;
+  z-index: 9997;
+  animation: burst 0.6s ease-out forwards;
+  box-shadow: 0 0 30px var(--glow-cyan);
+}

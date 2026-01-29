@@ -1,0 +1,217 @@
+/* ========================================
+   펫 카드 (Sidebar 스타일)
+======================================== */
+
+.pets-card {
+  margin-top: 5px;
+}
+
+.pets-playground {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  background: rgba(0, 217, 255, 0.03);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 15px;
+}
+
+/* ========================================
+   펫 기본 스타일
+======================================== */
+
+.pet {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+  user-select: none;
+}
+
+.pet:hover {
+  transform: scale(1.15);
+}
+
+.pet-emoji {
+  font-size: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+}
+
+/* 방향 */
+.pet-left .pet-emoji {
+  transform: scaleX(-1);
+}
+
+/* ========================================
+   행동 애니메이션
+======================================== */
+
+/* 걷기 */
+@keyframes walk {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
+.pet-action-walk .pet-emoji {
+  animation: walk 0.5s ease-in-out infinite;
+}
+
+/* 뛰기 */
+@keyframes run {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-8px) scale(1.05); }
+}
+
+.pet-action-run .pet-emoji {
+  animation: run 0.3s ease-in-out infinite;
+}
+
+/* 뒤뚱뒤뚱 */
+@keyframes waddle {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+
+.pet-action-waddle .pet-emoji {
+  animation: waddle 0.6s ease-in-out infinite;
+}
+
+/* 앉기 */
+.pet-action-sit .pet-emoji {
+  transform: scale(0.85);
+}
+
+/* 자기 */
+@keyframes sleep {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.pet-action-sleep .pet-emoji {
+  animation: sleep 2s ease-in-out infinite;
+  transform: rotate(90deg) scale(0.85);
+}
+
+/* 점프 */
+@keyframes jump {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-25px); }
+}
+
+.pet-action-jump .pet-emoji {
+  animation: jump 0.5s ease-in-out;
+}
+
+/* 꼬리 흔들기 */
+@keyframes wag {
+  0%, 100% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
+}
+
+.pet-action-wag .pet-emoji {
+  animation: wag 0.3s ease-in-out infinite;
+}
+
+/* 춤 */
+@keyframes dance {
+  0%, 100% { transform: rotate(-15deg) scale(1); }
+  25% { transform: rotate(15deg) scale(1.08); }
+  50% { transform: rotate(-15deg) scale(0.92); }
+  75% { transform: rotate(15deg) scale(1.08); }
+}
+
+.pet-action-dance .pet-emoji {
+  animation: dance 0.8s ease-in-out infinite;
+}
+
+/* 비프음 */
+@keyframes beep {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(2) drop-shadow(0 0 10px var(--accent-cyan)); }
+}
+
+.pet-action-beep .pet-emoji {
+  animation: beep 0.5s ease-in-out 3;
+}
+
+/* 스캔 */
+@keyframes scan {
+  0%, 100% { filter: hue-rotate(0deg); }
+  50% { filter: hue-rotate(180deg) drop-shadow(0 0 10px var(--accent-green)); }
+}
+
+.pet-action-scan .pet-emoji {
+  animation: scan 2s linear infinite;
+}
+
+/* 미끄러지기 */
+@keyframes slide {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.pet-action-slide .pet-emoji {
+  animation: slide 1s linear;
+}
+
+/* 손 흔들기 */
+@keyframes wave {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-20deg); }
+  75% { transform: rotate(20deg); }
+}
+
+.pet-action-wave .pet-emoji {
+  animation: wave 0.5s ease-in-out 3;
+}
+
+/* ========================================
+   말풍선
+======================================== */
+
+.pet-message {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 217, 255, 0.95);
+  color: #000;
+  padding: 6px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(0, 217, 255, 0.4);
+  animation: messageAppear 0.3s ease-out;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.pet-message::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid rgba(0, 217, 255, 0.95);
+}
+
+@keyframes messageAppear {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}

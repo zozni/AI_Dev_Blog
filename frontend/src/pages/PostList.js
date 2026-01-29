@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { postApi, categoryApi, tagApi } from '../services/api';
 import SearchBar from '../components/SearchBar';
 import Pagination from '../components/Pagination';
+import Pets from '../components/Pets';
 import './PostList.css';
 
 function PostList() {
@@ -303,6 +304,7 @@ function PostList() {
                 </div>
               </div>
             </div>
+          <Pets />
           </aside>
         </div>
       </main>
