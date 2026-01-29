@@ -7,28 +7,30 @@
 }
 
 :root {
-  --bg-primary: #0d1117;
-  --bg-secondary: #161b22;
-  --bg-card: #1f2937;
-  --text-primary: #e6edf3;
-  --text-secondary: #9198a1;
-  --text-muted: #6e7681;
+  /* AI Dev Blog - Dark Terminal Theme */
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-card: #0a0a0a;
+  --text-primary: #ededed;
+  --text-secondary: #a1a1a1;
+  --text-muted: #737373;
   
-  /* 부드러운 색상 */
-  --accent-cyan: #5DADE2;
-  --accent-pink: #F06292;
-  --accent-yellow: #FFD54F;
-  --accent-green: #66BB6A;
-  --accent-purple: #9575CD;
+  /* Terminal accent colors */
+  --accent-cyan: #00d9ff;
+  --accent-green: #00ff88;
+  --accent-purple: #a855f7;
+  --accent-orange: #f97316;
+  --accent-pink: #ec4899;
+  --accent-yellow: #eab308;
   
   /* 글로우 효과 */
-  --glow-cyan: rgba(93, 173, 226, 0.3);
-  --glow-pink: rgba(240, 98, 146, 0.3);
-  --glow-yellow: rgba(255, 213, 79, 0.3);
-  --glow-green: rgba(102, 187, 106, 0.3);
+  --glow-cyan: rgba(0, 217, 255, 0.3);
+  --glow-green: rgba(0, 255, 136, 0.3);
+  --glow-purple: rgba(168, 85, 247, 0.3);
+  --glow-orange: rgba(249, 115, 22, 0.3);
   
-  --border-color: #30363d;
-  --border-light: #484f58;
+  --border-color: #262626;
+  --border-light: #404040;
 }
 
 body {
@@ -48,9 +50,8 @@ body::before {
   width: 100%;
   height: 100%;
   background: 
-    radial-gradient(circle at 20% 50%, rgba(93, 173, 226, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(240, 98, 146, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 40% 20%, rgba(149, 117, 205, 0.05) 0%, transparent 50%);
+    radial-gradient(circle at 20% 50%, rgba(0, 217, 255, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.03) 0%, transparent 50%);
   pointer-events: none;
   z-index: 0;
 }
@@ -79,7 +80,7 @@ body::before {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--accent-pink), var(--accent-yellow));
+  background: linear-gradient(180deg, var(--accent-green), var(--accent-cyan));
 }
 
 /* 그라디언트 라인 */
@@ -87,9 +88,7 @@ body::before {
   height: 3px;
   background: linear-gradient(90deg, 
     var(--accent-cyan) 0%, 
-    var(--accent-purple) 25%, 
-    var(--accent-pink) 50%, 
-    var(--accent-yellow) 75%, 
+    var(--accent-purple) 50%, 
     var(--accent-green) 100%
   );
   border-radius: 10px;
@@ -173,7 +172,7 @@ button, .button {
 
 .btn-primary {
   background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
-  color: white;
+  color: #000000;
   box-shadow: 0 4px 15px var(--glow-cyan);
 }
 
@@ -184,7 +183,7 @@ button, .button {
 
 .btn-success {
   background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
-  color: white;
+  color: #000000;
   box-shadow: 0 4px 15px var(--glow-green);
 }
 
@@ -201,7 +200,7 @@ button, .button {
 
 .btn-danger:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 25px var(--glow-pink);
+  box-shadow: 0 6px 25px rgba(236, 72, 153, 0.3);
 }
 
 .btn-secondary {
@@ -255,27 +254,33 @@ input::placeholder, textarea::placeholder {
 }
 
 .badge-cyan {
-  background: linear-gradient(135deg, var(--glow-cyan), transparent);
+  background: rgba(0, 217, 255, 0.15);
   color: var(--accent-cyan);
   border: 1px solid var(--accent-cyan);
 }
 
 .badge-pink {
-  background: linear-gradient(135deg, var(--glow-pink), transparent);
+  background: rgba(236, 72, 153, 0.15);
   color: var(--accent-pink);
   border: 1px solid var(--accent-pink);
 }
 
 .badge-green {
-  background: linear-gradient(135deg, var(--glow-green), transparent);
+  background: rgba(0, 255, 136, 0.15);
   color: var(--accent-green);
   border: 1px solid var(--accent-green);
 }
 
 .badge-purple {
-  background: linear-gradient(135deg, rgba(149, 117, 205, 0.3), transparent);
+  background: rgba(168, 85, 247, 0.15);
   color: var(--accent-purple);
   border: 1px solid var(--accent-purple);
+}
+
+.badge-orange {
+  background: rgba(249, 115, 22, 0.15);
+  color: var(--accent-orange);
+  border: 1px solid var(--accent-orange);
 }
 
 /* 링크 */
@@ -286,7 +291,7 @@ a {
 }
 
 a:hover {
-  color: var(--accent-purple);
+  color: var(--accent-green);
   text-shadow: 0 0 10px var(--glow-cyan);
 }
 

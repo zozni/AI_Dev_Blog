@@ -26,16 +26,18 @@
 }
 
 .page-button:hover:not(:disabled) {
-  border-color: #5DADE2;
-  color: #5DADE2;
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
   transform: translateY(-2px);
+  box-shadow: 0 0 15px var(--glow-cyan);
 }
 
 .page-button.active {
-  background: linear-gradient(135deg, #5DADE2, #9575CD);
-  color: white;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+  color: #000000;
   border-color: transparent;
-  box-shadow: 0 4px 15px rgba(93, 173, 226, 0.3);
+  box-shadow: 0 4px 15px var(--glow-cyan);
+  font-weight: 600;
 }
 
 .page-button:disabled {
@@ -46,6 +48,7 @@
 
 .page-button:disabled:hover {
   transform: none;
+  box-shadow: none;
 }
 
 @media (max-width: 640px) {

@@ -1,60 +1,60 @@
 .markdown-viewer {
   line-height: 1.8;
-  color: #c9d1d9;
-  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-secondary);
+  font-family: 'Inter', sans-serif;
 }
 
 .markdown-viewer h1 {
   font-size: 2rem;
   margin: 1.5em 0 0.5em;
   padding-bottom: 0.3em;
-  border-bottom: 2px solid #30363d;
-  color: #58a6ff;
+  border-bottom: 2px solid var(--border-color);
+  color: var(--accent-cyan);
   font-weight: 600;
-  text-shadow: 0 0 10px rgba(88, 166, 255, 0.2);
+  text-shadow: 0 0 10px var(--glow-cyan);
 }
 
 .markdown-viewer h1::before {
   content: '# ';
-  color: #7ee787;
+  color: var(--accent-green);
 }
 
 .markdown-viewer h2 {
   font-size: 1.5rem;
   margin: 1.3em 0 0.5em;
   padding-bottom: 0.3em;
-  border-bottom: 1px solid #30363d;
-  color: #58a6ff;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--accent-cyan);
   font-weight: 600;
 }
 
 .markdown-viewer h2::before {
   content: '## ';
-  color: #7ee787;
+  color: var(--accent-green);
 }
 
 .markdown-viewer h3 {
   font-size: 1.25rem;
   margin: 1em 0 0.5em;
-  color: #58a6ff;
+  color: var(--accent-cyan);
   font-weight: 600;
 }
 
 .markdown-viewer h3::before {
   content: '### ';
-  color: #7ee787;
+  color: var(--accent-green);
 }
 
 .markdown-viewer p {
   margin: 1em 0;
-  color: #c9d1d9;
+  color: var(--text-secondary);
 }
 
 .markdown-viewer ul,
 .markdown-viewer ol {
   margin: 1em 0;
   padding-left: 2em;
-  color: #c9d1d9;
+  color: var(--text-secondary);
 }
 
 .markdown-viewer li {
@@ -62,31 +62,31 @@
 }
 
 .markdown-viewer ul li::marker {
-  color: #7ee787;
+  color: var(--accent-green);
 }
 
 .markdown-viewer ol li::marker {
-  color: #58a6ff;
+  color: var(--accent-cyan);
 }
 
 .markdown-viewer code {
-  background: #161b22;
+  background: var(--bg-secondary);
   padding: 3px 8px;
   border-radius: 4px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.9em;
-  color: #ffa657;
-  border: 1px solid #30363d;
+  color: var(--accent-orange);
+  border: 1px solid var(--border-color);
 }
 
 .markdown-viewer pre {
   margin: 1.5em 0;
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
-  background: #0d1117;
-  border: 2px solid #30363d;
+  background: var(--bg-primary);
+  border: 2px solid var(--border-color);
   box-shadow: 
-    0 0 20px rgba(88, 166, 255, 0.1),
+    0 0 20px var(--glow-cyan),
     inset 0 0 20px rgba(0, 0, 0, 0.3);
 }
 
@@ -102,52 +102,52 @@
 .markdown-viewer blockquote {
   margin: 1.5em 0;
   padding: 0.5em 1em;
-  border-left: 4px solid #58a6ff;
-  background: rgba(88, 166, 255, 0.05);
-  color: #8b949e;
+  border-left: 4px solid var(--accent-cyan);
+  background: rgba(0, 217, 255, 0.05);
+  color: var(--text-muted);
   border-radius: 0 4px 4px 0;
   font-style: italic;
 }
 
 .markdown-viewer blockquote::before {
   content: '> ';
-  color: #58a6ff;
+  color: var(--accent-cyan);
   font-weight: bold;
 }
 
 .markdown-viewer a {
-  color: #58a6ff;
+  color: var(--accent-cyan);
   text-decoration: none;
   border-bottom: 1px solid transparent;
   transition: all 0.3s ease;
 }
 
 .markdown-viewer a:hover {
-  color: #7ee787;
-  border-bottom-color: #7ee787;
-  text-shadow: 0 0 10px rgba(126, 231, 135, 0.3);
+  color: var(--accent-green);
+  border-bottom-color: var(--accent-green);
+  text-shadow: 0 0 10px var(--glow-green);
 }
 
 .markdown-viewer table {
   width: 100%;
   border-collapse: collapse;
   margin: 1.5em 0;
-  background: #161b22;
-  border: 2px solid #30363d;
-  border-radius: 6px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
   overflow: hidden;
 }
 
 .markdown-viewer th,
 .markdown-viewer td {
-  border: 1px solid #30363d;
+  border: 1px solid var(--border-color);
   padding: 10px 15px;
   text-align: left;
 }
 
 .markdown-viewer th {
-  background: #0d1117;
-  color: #58a6ff;
+  background: var(--bg-primary);
+  color: var(--accent-cyan);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -155,38 +155,38 @@
 }
 
 .markdown-viewer tr:hover {
-  background: rgba(88, 166, 255, 0.05);
+  background: rgba(0, 217, 255, 0.05);
 }
 
 .markdown-viewer img {
   max-width: 100%;
   height: auto;
   margin: 1em 0;
-  border-radius: 6px;
-  border: 2px solid #30363d;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .markdown-viewer hr {
   border: none;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #30363d, transparent);
+  background: linear-gradient(90deg, transparent, var(--border-color), transparent);
   margin: 2em 0;
 }
 
 .markdown-viewer strong {
-  color: #ffa657;
+  color: var(--accent-orange);
   font-weight: 600;
 }
 
 .markdown-viewer em {
-  color: #d2a8ff;
+  color: var(--accent-purple);
   font-style: italic;
 }
 
 /* 코드 하이라이팅 스타일 오버라이드 */
 .markdown-viewer pre > div {
-  background: #0d1117 !important;
+  background: var(--bg-primary) !important;
   padding: 20px !important;
   margin: 0 !important;
 }
@@ -199,7 +199,7 @@
 /* 체크박스 스타일 */
 .markdown-viewer input[type="checkbox"] {
   margin-right: 8px;
-  accent-color: #58a6ff;
+  accent-color: var(--accent-cyan);
 }
 
 /* 반응형 */
