@@ -6,9 +6,9 @@ import PostForm from './pages/PostForm';
 import './App.css';
 
 function App() {
-  // 커스텀 커서 상태
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [cursorDotPos, setCursorDotPos] = useState({ x: 0, y: 0 });
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 }); // 🆕 배경 텍스트용
 
   // 커서 이동 추적
   useEffect(() => {
@@ -17,13 +17,19 @@ function App() {
       setTimeout(() => {
         setCursorDotPos({ x: e.clientX, y: e.clientY });
       }, 50);
+
+      // 🆕 배경 텍스트 패럴랙스 (마우스 위치 기반)
+      setMousePos({
+        x: (e.clientX / window.innerWidth - 0.5) * 30,
+        y: (e.clientY / window.innerHeight - 0.5) * 30
+      });
     };
 
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  // 타이핑 효과 (전역)
+  // 타이핑 효과 (기존 코드 유지)
   useEffect(() => {
     const handleKeyPress = (e) => {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
@@ -31,8 +37,7 @@ function App() {
         setTimeout(() => {
           e.target.classList.remove('typing-active');
         }, 600);
-
-        createConfetti(e.clientX || cursorPos.x, e.clientY || cursorPos.y, 5);
+        createConfetti(e.clientX || cursorPos.x, e.clientY || cursorPos.y);
       }
     };
 
@@ -40,7 +45,7 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [cursorPos]);
 
-  // 🎆 클릭 폭죽 효과 추가
+  // 클릭 폭죽 효과 (기존 코드 유지)
   useEffect(() => {
     const handleClick = (e) => {
       createFirework(e.clientX, e.clientY);
@@ -50,11 +55,12 @@ function App() {
     return () => window.removeEventListener('click', handleClick);
   }, []);
 
-  // 팡파레 파티클 생성 함수
-  const createConfetti = (x, y, count = 5) => {
+  // 팡파레 함수 (기존 코드 유지)
+  const createConfetti = (x, y) => {
     const colors = ['#00d9ff', '#00ff88', '#a855f7', '#ec4899', '#f97316', '#eab308'];
+    const particleCount = 5;
 
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < particleCount; i++) {
       const particle = document.createElement('div');
       particle.className = 'confetti-particle';
       particle.style.left = `${x}px`;
@@ -71,10 +77,10 @@ function App() {
     }
   };
 
-  // 🎆 폭죽 효과 생성 함수
+  // 폭죽 함수 (기존 코드 유지)
   const createFirework = (x, y) => {
     const colors = ['#00d9ff', '#00ff88', '#a855f7', '#ec4899', '#f97316', '#eab308'];
-    const particleCount = 10; // 폭죽 파티클 개수
+    const particleCount = 20;
 
     for (let i = 0; i < particleCount; i++) {
       const particle = document.createElement('div');
@@ -83,13 +89,11 @@ function App() {
       particle.style.top = `${y}px`;
       particle.style.background = colors[Math.floor(Math.random() * colors.length)];
       
-      // 360도 원형으로 퍼지는 효과
       const angle = (i / particleCount) * 360 * (Math.PI / 180);
       const velocity = 100 + Math.random() * 50;
       particle.style.setProperty('--x', `${Math.cos(angle) * velocity}px`);
       particle.style.setProperty('--y', `${Math.sin(angle) * velocity}px`);
 
-      // 랜덤 크기
       const size = 6 + Math.random() * 6;
       particle.style.width = `${size}px`;
       particle.style.height = `${size}px`;
@@ -98,7 +102,6 @@ function App() {
       setTimeout(() => particle.remove(), 1200);
     }
 
-    // 중앙 폭발 효과
     const burst = document.createElement('div');
     burst.className = 'firework-burst';
     burst.style.left = `${x}px`;
@@ -110,6 +113,16 @@ function App() {
   return (
     <Router>
       <div className="App">
+        {/* 🆕 배경 타이포그래피 */}
+        <div 
+          className="floating-typography parallax"
+          style={{
+            transform: `translate(calc(-50% + ${mousePos.x}px), calc(-50% + ${mousePos.y}px))`
+          }}
+        >
+          AI DEV
+        </div>
+
         {/* 커스텀 커서 */}
         <div className="custom-cursor">
           <div 
@@ -127,7 +140,7 @@ function App() {
             }}
           />
         </div>
-    
+
         <Routes>
           <Route path="/" element={<PostList />} />
           <Route path="/post/:id" element={<PostDetail />} />

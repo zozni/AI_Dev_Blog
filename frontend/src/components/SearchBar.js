@@ -15,15 +15,24 @@ function SearchBar({ onSearch }) {
   };
 
   return (
-    <div className="search-bar">
-      <form onSubmit={handleSubmit}>
+    <div className="search-bar-terminal">
+      {/* 맥북 창 헤더 */}
+      <div className="terminal-window-header">
+        <div className="window-controls">
+          <span className="window-dot dot-red"></span>
+          <span className="window-dot dot-yellow"></span>
+          <span className="window-dot dot-green"></span>
+        </div>
+        <span className="window-title">search.sh</span>
+      </div>
+
+      {/* 터미널 바디 */}
+      <form onSubmit={handleSubmit} className="terminal-body">
         <div className="search-input-wrapper">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+          <span className="terminal-prompt">$</span>
           <input
             type="text"
-            placeholder="Search posts..."
+            placeholder="search posts..."
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             className="search-input"

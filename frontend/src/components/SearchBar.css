@@ -1,24 +1,90 @@
-.search-bar {
-  display: flex;
-  gap: 12px;
+/* ========================================
+   맥북 터미널 스타일 검색바
+======================================== */
+
+.search-bar-terminal {
+  width: 100%;
   max-width: 600px;
+  margin: 30px auto 0;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
 }
 
-.search-bar form {
-  flex: 1;
+.search-bar-terminal:hover {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 8px 40px var(--glow-cyan);
+}
+
+/* 맥북 창 헤더 */
+.terminal-window-header {
+  background: var(--bg-secondary);
+  padding: 12px 15px;
   display: flex;
-  gap: 12px;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.window-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.window-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.window-dot:hover {
+  transform: scale(1.2);
+  filter: brightness(1.2);
+}
+
+.dot-red {
+  background: linear-gradient(135deg, #ff5f57 0%, #ff3b30 100%);
+  box-shadow: 0 0 10px rgba(255, 95, 87, 0.4);
+}
+
+.dot-yellow {
+  background: linear-gradient(135deg, #ffbd2e 0%, #ff9500 100%);
+  box-shadow: 0 0 10px rgba(255, 189, 46, 0.4);
+}
+
+.dot-green {
+  background: linear-gradient(135deg, #28ca42 0%, #30d158 100%);
+  box-shadow: 0 0 10px rgba(40, 202, 66, 0.4);
+}
+
+.window-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-left: 10px;
+}
+
+/* 터미널 바디 */
+.terminal-body {
+  padding: 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 .search-input-wrapper {
   flex: 1;
-  position: relative;
   display: flex;
   align-items: center;
-  background: var(--bg-secondary);
-  border: 2px solid var(--border-color);
+  gap: 12px;
+  background: var(--bg-primary);
+  padding: 12px 18px;
   border-radius: 8px;
-  padding: 12px 16px;
+  border: 2px solid var(--border-color);
   transition: all 0.3s ease;
 }
 
@@ -27,62 +93,57 @@
   box-shadow: 0 0 0 3px var(--glow-cyan);
 }
 
-.search-input-wrapper svg {
-  width: 18px;
-  height: 18px;
-  color: var(--text-muted);
-  margin-right: 12px;
+.terminal-prompt {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent-green);
+  font-weight: bold;
+  font-size: 1rem;
 }
 
 .search-input {
   flex: 1;
-  border: none;
   background: transparent;
-  font-size: 15px;
-  color: var(--text-primary);
+  border: none;
   outline: none;
-  font-family: 'Inter', sans-serif;
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
 }
 
 .search-input::placeholder {
   color: var(--text-muted);
+  font-style: italic;
 }
 
 .clear-button {
-  position: absolute;
-  right: 16px;
-  background: rgba(236, 72, 153, 0.15);
-  border: 1px solid var(--accent-pink);
-  color: var(--accent-pink);
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  font-size: 14px;
   transition: all 0.3s ease;
-  padding: 0;
 }
 
 .clear-button:hover {
-  background: rgba(236, 72, 153, 0.25);
-  box-shadow: 0 0 10px rgba(236, 72, 153, 0.3);
+  color: var(--accent-pink);
+  transform: rotate(90deg);
 }
 
 .search-button {
-  padding: 12px 24px;
   background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
-  color: #000000;
+  color: #000;
   border: none;
+  padding: 12px 25px;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px var(--glow-cyan);
-  font-size: 14px;
   font-family: 'Inter', sans-serif;
+  box-shadow: 0 4px 15px var(--glow-cyan);
 }
 
 .search-button:hover {
@@ -90,11 +151,17 @@
   box-shadow: 0 6px 25px var(--glow-cyan);
 }
 
-@media (max-width: 640px) {
-  .search-bar form {
+.search-button:active {
+  transform: translateY(0);
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .terminal-body {
     flex-direction: column;
+    gap: 15px;
   }
-  
+
   .search-button {
     width: 100%;
   }

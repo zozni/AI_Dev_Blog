@@ -109,7 +109,8 @@
   height: 56px;
   background: var(--accent-cyan);
   margin-left: 4px;
-  animation: blink 1s step-end infinite;
+  animation: blink 0.8s step-end 5; /* 5번 반복 */
+  animation-fill-mode: forwards; /* 애니메이션 끝나면 마지막 상태 유지 (사라진 상태) */
 }
 
 @keyframes blink {
@@ -440,6 +441,5 @@
   .sidebar {
     grid-template-columns: 1fr;
   }
-
   
 }
