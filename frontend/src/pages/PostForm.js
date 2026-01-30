@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { postApi, categoryApi } from '../services/api';
+import { postApi, categoryApi, imageApi } from '../services/api';
 import MarkdownViewer from '../components/MarkdownViewer';
 import './PostForm.css';
 
@@ -22,10 +22,17 @@ function PostForm() {
   const [errors, setErrors] = useState({});
   const [showPreview, setShowPreview] = useState(false);
 
+  // ✅ 이미지 관련 상태 추가
+  const [imageFiles, setImageFiles] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
+  const [existingImages, setExistingImages] = useState([]);
+  const [imageErrors, setImageErrors] = useState('');
+
   useEffect(() => {
     loadCategories();
     if (isEditMode) {
       loadPost();
+      loadExistingImages();
     }
   }, [id]);
 
@@ -53,6 +60,16 @@ function PostForm() {
     }
   };
 
+  // ✅ 기존 이미지 로딩
+  const loadExistingImages = async () => {
+    try {
+      const response = await imageApi.getPostImages(id);
+      setExistingImages(response.data);
+    } catch (error) {
+      console.error('이미지 로딩 실패:', error);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -68,7 +85,6 @@ function PostForm() {
   };
 
   const handleAddTag = (e) => {
-    // IME 입력 중이면 무시
     if (e.nativeEvent.isComposing) return;
     
     if (e.key === 'Enter' && tagInput.trim()) {
@@ -88,6 +104,72 @@ function PostForm() {
       ...formData,
       tags: formData.tags.filter(tag => tag !== tagToRemove),
     });
+  };
+
+  // ✅ 이미지 파일 선택 핸들러
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    setImageErrors('');
+
+    // 파일 개수 제한 없음 (서버에서 총 크기만 체크)
+    
+    // 파일 검증
+    for (const file of files) {
+      // 파일 타입 검증
+      if (!file.type.startsWith('image/')) {
+        setImageErrors('이미지 파일만 업로드 가능합니다.');
+        return;
+      }
+      
+      // 단일 파일 크기 검증 (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setImageErrors('각 이미지는 5MB 이하여야 합니다.');
+        return;
+      }
+    }
+
+    // 총 크기 검증 (기존 + 새로운 파일)
+    const existingSize = existingImages.reduce((sum, img) => sum + img.fileSize, 0);
+    const newSize = files.reduce((sum, file) => sum + file.size, 0);
+    const currentSize = imageFiles.reduce((sum, file) => sum + file.size, 0);
+    
+    if (existingSize + currentSize + newSize > 20 * 1024 * 1024) {
+      setImageErrors('게시물당 총 이미지 크기는 20MB를 초과할 수 없습니다.');
+      return;
+    }
+
+    // 미리보기 생성
+    const newPreviews = [];
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        newPreviews.push({ file, preview: reader.result });
+        if (newPreviews.length === files.length) {
+          setImageFiles([...imageFiles, ...files]);
+          setImagePreviews([...imagePreviews, ...newPreviews]);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // ✅ 새 이미지 미리보기 삭제
+  const handleRemoveImage = (index) => {
+    setImageFiles(imageFiles.filter((_, i) => i !== index));
+    setImagePreviews(imagePreviews.filter((_, i) => i !== index));
+  };
+
+  // ✅ 기존 이미지 삭제
+  const handleRemoveExistingImage = async (imageId) => {
+    if (!window.confirm('이미지를 삭제하시겠습니까?')) return;
+    
+    try {
+      await imageApi.deleteImage(id, imageId);
+      setExistingImages(existingImages.filter(img => img.id !== imageId));
+    } catch (error) {
+      console.error('이미지 삭제 실패:', error);
+      alert('이미지 삭제에 실패했습니다.');
+    }
   };
 
   const validate = () => {
@@ -120,11 +202,22 @@ function PostForm() {
         tags: formData.tags.length > 0 ? formData.tags : null,
       };
 
+      let postId;
       if (isEditMode) {
         await postApi.updatePost(id, submitData);
+        postId = id;
       } else {
-        await postApi.createPost(submitData);
+        const response = await postApi.createPost(submitData);
+        postId = response.data.id;
       }
+
+      // ✅ 이미지 업로드 (새 이미지가 있을 경우)
+      if (imageFiles.length > 0) {
+        for (let i = 0; i < imageFiles.length; i++) {
+          await imageApi.uploadImage(postId, imageFiles[i], existingImages.length + i);
+        }
+      }
+
       navigate('/');
     } catch (error) {
       console.error('저장 실패:', error);
@@ -256,6 +349,75 @@ function PostForm() {
                 </span>
               ))}
             </div>
+          </div>
+
+          {/* ✅ 이미지 업로드 섹션 추가 */}
+          <div className="form-group">
+            <label htmlFor="images">이미지 (선택사항)</label>
+            <input
+              type="file"
+              id="images"
+              accept="image/*"
+              multiple
+              onChange={handleImageChange}
+              style={{ display: 'none' }}
+            />
+            <button
+              type="button"
+              onClick={() => document.getElementById('images').click()}
+              className="image-upload-button"
+            >
+              📷 이미지 추가
+            </button>
+            <p className="image-info">단일 파일 최대 5MB, 게시물당 총 20MB</p>
+            {imageErrors && <span className="error-message">{imageErrors}</span>}
+            
+            {/* 기존 이미지 미리보기 */}
+            {existingImages.length > 0 && (
+              <div className="image-preview-container">
+                <h4>기존 이미지</h4>
+                <div className="image-preview-grid">
+                  {existingImages.map((image) => (
+                    <div key={image.id} className="image-preview-item">
+                      <img
+                        src={imageApi.getImageUrl(id, image.id)}
+                        alt={image.originalFileName}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveExistingImage(image.id)}
+                        className="image-remove-button"
+                      >
+                        ✕
+                      </button>
+                      <p className="image-filename">{image.originalFileName}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* 새 이미지 미리보기 */}
+            {imagePreviews.length > 0 && (
+              <div className="image-preview-container">
+                <h4>새 이미지</h4>
+                <div className="image-preview-grid">
+                  {imagePreviews.map((item, index) => (
+                    <div key={index} className="image-preview-item">
+                      <img src={item.preview} alt={item.file.name} />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(index)}
+                        className="image-remove-button"
+                      >
+                        ✕
+                      </button>
+                      <p className="image-filename">{item.file.name}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="form-group">

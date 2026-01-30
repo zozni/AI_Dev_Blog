@@ -68,4 +68,9 @@ public class Post {
     @Builder.Default
     private List<PostLike> likes = new ArrayList<>();
 
+    // ✅ 새로 추가: 이미지 관계
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("displayOrder ASC")
+    @Builder.Default
+    private List<PostImage> images = new ArrayList<>();
 }

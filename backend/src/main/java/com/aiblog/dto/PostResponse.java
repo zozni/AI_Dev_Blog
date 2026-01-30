@@ -30,6 +30,9 @@ public class PostResponse {
     private Boolean isLiked;
     private List<CommentResponse> comments;
     
+    // ✅ 새로 추가: 이미지 ID 리스트
+    private List<Long> imageIds;
+    
     public static PostResponse from(Post post) {
         return PostResponse.builder()
                 .id(post.getId())
@@ -49,6 +52,12 @@ public class PostResponse {
                         post.getComments().stream()
                                 .map(CommentResponse::from)
                                 .collect(Collectors.toList()) : 
+                        List.of())
+                // ✅ 새로 추가: 이미지 ID 매핑
+                .imageIds(post.getImages() != null ?
+                        post.getImages().stream()
+                                .map(img -> img.getId())
+                                .collect(Collectors.toList()) :
                         List.of())
                 .build();
     }

@@ -128,5 +128,6 @@ public class PostService {
     @Transactional
     public void deletePost(Long id) {
         postRepository.deleteById(id);
+        // 이미지는 cascade = CascadeType.ALL, orphanRemoval = true로 자동 삭제됨
     }
 }

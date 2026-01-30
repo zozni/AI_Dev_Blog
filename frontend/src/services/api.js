@@ -46,4 +46,31 @@ export const likeApi = {
   toggleLike: (postId) => api.post(`/posts/${postId}/likes`),
 };
 
+// ✅ 이미지 API 추가
+export const imageApi = {
+  // 이미지 업로드
+  uploadImage: (postId, file, displayOrder = 0) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('displayOrder', displayOrder);
+    
+    return axios.post(`${API_BASE_URL}/posts/${postId}/images`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+  
+  // 이미지 조회 (URL 반환)
+  getImageUrl: (postId, imageId) => {
+    return `${API_BASE_URL}/posts/${postId}/images/${imageId}`;
+  },
+  
+  // 게시글의 모든 이미지 정보 조회
+  getPostImages: (postId) => api.get(`/posts/${postId}/images`),
+  
+  // 이미지 삭제
+  deleteImage: (postId, imageId) => api.delete(`/posts/${postId}/images/${imageId}`),
+};
+
 export default api;
