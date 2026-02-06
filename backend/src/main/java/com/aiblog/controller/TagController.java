@@ -20,4 +20,10 @@ public class TagController {
     public ResponseEntity<List<TagResponse>> getAllTags() {
         return ResponseEntity.ok(tagService.getAllTags());
     }
+    
+    // 태그 클라우드용 엔드포인트
+    @GetMapping("/cloud")
+    public ResponseEntity<List<TagResponse>> getTagCloud() {
+        return ResponseEntity.ok(tagService.getTagsWithPostCount());
+    }
 }

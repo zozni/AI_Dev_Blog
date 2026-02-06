@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom'; // useSearchParams 추가
 import { postApi, categoryApi, tagApi } from '../services/api';
 import SearchBar from '../components/SearchBar';
 import Pagination from '../components/Pagination';
 import Pets from '../components/Pets';
+import TagCloud from '../components/TagCloud'; // TagCloud 추가
 import './PostList.css';
 
 function PostList() {
@@ -17,6 +18,9 @@ function PostList() {
   const [keyword, setKeyword] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedTag, setSelectedTag] = useState(null);
+
+  // URL 파라미터 읽기
+  const [searchParams] = useSearchParams();
 
   // 타이핑 애니메이션
   const [displayTitle, setDisplayTitle] = useState('');
@@ -34,6 +38,16 @@ function PostList() {
     }, 100);
     return () => clearInterval(timer);
   }, []);
+
+  // URL 파라미터에서 태그 읽기
+  useEffect(() => {
+    const tagParam = searchParams.get('tag');
+    if (tagParam) {
+      setSelectedTag(tagParam);
+      setKeyword('');
+      setSelectedCategory(null);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     loadCategories();
@@ -264,6 +278,9 @@ function PostList() {
 
           {/* Sidebar */}
           <aside className="sidebar">
+            {/* 태그 클라우드 추가 */}
+            <TagCloud />
+
             {/* Tags */}
             <div className="sidebar-card">
               <h3 className="sidebar-title">
@@ -304,7 +321,7 @@ function PostList() {
                 </div>
               </div>
             </div>
-          <Pets />
+            <Pets />
           </aside>
         </div>
       </main>

@@ -27,6 +27,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
+    private final WordCloudService wordCloudService;  // ✅ 추가
     
     public Page<PostResponse> getAllPosts(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
@@ -89,6 +90,10 @@ public class PostService {
         }
         
         Post savedPost = postRepository.save(post);
+        
+        // ✅ 워드클라우드 재생성 (비동기)
+        regenerateWordCloudAsync();
+        
         return PostResponse.from(savedPost);
     }
     
@@ -122,12 +127,37 @@ public class PostService {
             post.setTags(tags);
         }
         
+        // ✅ 워드클라우드 재생성 (비동기)
+        regenerateWordCloudAsync();
+        
         return PostResponse.from(post);
     }
     
     @Transactional
     public void deletePost(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+        
+        // 태그 관계 먼저 제거
+        post.getTags().clear();
+        postRepository.save(post);
+        
+        // 게시글 삭제
         postRepository.deleteById(id);
-        // 이미지는 cascade = CascadeType.ALL, orphanRemoval = true로 자동 삭제됨
+        
+        // ✅ 워드클라우드 재생성 (비동기)
+        regenerateWordCloudAsync();
+    }
+    
+    // ✅ 비동기 워드클라우드 재생성 (응답 속도 저하 방지)
+    private void regenerateWordCloudAsync() {
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000); // 트랜잭션 커밋 대기
+                wordCloudService.generateWordCloud();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }).start();
     }
 }

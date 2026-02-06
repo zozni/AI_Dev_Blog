@@ -23,7 +23,23 @@ spring:
   
 server:
   port: 8080
+  include-message: always
+  include-binding-errors: always
+  include-stacktrace: always
+  include-exception: true
 
 logging:
   level:
     com.aiblog: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+# 워드클라우드 설정
+wordcloud:
+  python:
+    path: /Users/user/Desktop/DOUZONE/0. 개인 프로젝트/ai_blog/ai/.venv/bin/python
+  script:
+    path: ../ai/word_cloud_generator.py
+  output:
+    path: ../ai/output/tag_cloud.png

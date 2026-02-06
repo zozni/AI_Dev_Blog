@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { postApi, commentApi, likeApi, imageApi } from '../services/api';
 import MarkdownViewer from '../components/MarkdownViewer';
@@ -18,16 +18,77 @@ function PostDetail() {
   // 좋아요 관련 상태
   const [likeInfo, setLikeInfo] = useState({ likeCount: 0, isLiked: false });
 
-  // ✅ 이미지 관련 상태 추가
+  // 이미지 관련 상태
   const [images, setImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
+
+  // 목차 관련 상태 추가
+  const [tableOfContents, setTableOfContents] = useState([]);
+  const [activeHeading, setActiveHeading] = useState(null);
+  const contentRef = useRef(null);
 
   useEffect(() => {
     loadPost();
     loadComments();
     loadLikeInfo();
-    loadImages(); // ✅ 이미지 로딩 추가
+    loadImages();
   }, [id]);
+
+  // 목차 생성 로직
+  useEffect(() => {
+    if (post && post.content) {
+      generateTableOfContents(post.content);
+    }
+  }, [post]);
+
+  // 스크롤 감지 (현재 보고 있는 섹션 하이라이트)
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!contentRef.current) return;
+
+      const headings = contentRef.current.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      let currentHeading = null;
+
+      headings.forEach((heading) => {
+        const rect = heading.getBoundingClientRect();
+        if (rect.top <= 150 && rect.top >= -100) {
+          currentHeading = heading.id;
+        }
+      });
+
+      setActiveHeading(currentHeading);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [post]);
+
+  // 목차 생성 함수
+  const generateTableOfContents = (content) => {
+    const headingRegex = /^(#{1,6})\s+(.+)$/gm;
+    const toc = [];
+    let match;
+
+    while ((match = headingRegex.exec(content)) !== null) {
+      const level = match[1].length;
+      const text = match[2].trim();
+      const id = text.toLowerCase().replace(/[^a-z0-9가-힣]+/g, '-');
+      
+      toc.push({ level, text, id });
+    }
+
+    setTableOfContents(toc);
+  };
+
+  // 목차 클릭 핸들러
+  const scrollToHeading = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      const yOffset = -100; // 헤더 높이 보정
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
 
   const loadPost = async () => {
     try {
@@ -58,7 +119,6 @@ function PostDetail() {
     }
   };
 
-  // ✅ 이미지 로딩 함수
   const loadImages = async () => {
     try {
       const response = await imageApi.getPostImages(id);
@@ -171,122 +231,140 @@ function PostDetail() {
 
       {/* Content */}
       <main className="detail-main">
-        <article className="post-article">
-          {/* Post Header */}
-          <header className="post-header">
-            {post.category && (
-              <span 
-                className="category-badge"
-                style={{ 
-                  color: getCategoryColor(post.category.name),
-                  backgroundColor: `${getCategoryColor(post.category.name)}15`
-                }}
-              >
-                {post.category.name}
-              </span>
-            )}
-            
-            <h1 className="article-title">{post.title}</h1>
-            
-            <div className="article-meta">
-              <div className="meta-left">
-                <span className="author">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
-                  {post.author}
-                </span>
-                <span className="date">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                  </svg>
-                  {formatDate(post.createdAt)}
-                </span>
-              </div>
-              <span className="views">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-                {post.viewCount} views
-              </span>
-            </div>
-
-            {post.tags && post.tags.length > 0 && (
-              <div className="article-tags">
-                {post.tags.map((tag) => (
-                  <span key={tag.id} className="tag">#{tag.name}</span>
-                ))}
-              </div>
-            )}
-          </header>
-
-          {/* ✅ 이미지 갤러리 추가 (본문 위) */}
-          {images.length > 0 && (
-            <div className="post-images-gallery">
-              <div className="images-grid">
-                {images.map((image) => (
-                  <div 
-                    key={image.id} 
-                    className="gallery-item"
-                    onClick={() => setSelectedImage(image)}
+        <div className="detail-layout">
+          {/* 목차 사이드바 (왼쪽) */}
+          {tableOfContents.length > 0 && (
+            <aside className="table-of-contents">
+              <h3 className="toc-title">📑 목차</h3>
+              <nav className="toc-nav">
+                {tableOfContents.map((item, index) => (
+                  <button
+                    key={index}
+                    className={`toc-item toc-level-${item.level} ${activeHeading === item.id ? 'active' : ''}`}
+                    onClick={() => scrollToHeading(item.id)}
                   >
-                    <img
-                      src={imageApi.getImageUrl(id, image.id)}
-                      alt={image.originalFileName}
-                      loading="lazy"
-                    />
-                  </div>
+                    {item.text}
+                  </button>
                 ))}
-              </div>
-            </div>
+              </nav>
+            </aside>
           )}
 
-          {/* Post Content */}
-          <div className="article-content">
-            <MarkdownViewer content={post.content} />
-          </div>
-
-          {/* Post Actions */}
-          <footer className="article-footer">
-            <div className="action-buttons">
-              {/* 좋아요 버튼을 왼쪽에 배치 */}
-              <button 
-                className={`like-button ${likeInfo.isLiked ? 'liked' : ''}`}
-                onClick={handleLikeToggle}
-              >
-                <span className="heart-icon">{likeInfo.isLiked ? '❤️' : '🤍'}</span>
-                <span className="like-count">{likeInfo.likeCount}</span>
-              </button>
+          {/* 메인 콘텐츠 */}
+          <article className="post-article">
+            {/* Post Header */}
+            <header className="post-header">
+              {post.category && (
+                <span 
+                  className="category-badge"
+                  style={{ 
+                    color: getCategoryColor(post.category.name),
+                    backgroundColor: `${getCategoryColor(post.category.name)}15`
+                  }}
+                >
+                  {post.category.name}
+                </span>
+              )}
               
-              {/* 오른쪽 버튼들 */}
-              <div className="right-buttons">
-                <Link to={`/edit/${post.id}`} className="edit-btn">
+              <h1 className="article-title">{post.title}</h1>
+              
+              <div className="article-meta">
+                <div className="meta-left">
+                  <span className="author">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    {post.author}
+                  </span>
+                  <span className="date">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    {formatDate(post.createdAt)}
+                  </span>
+                </div>
+                <span className="views">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
                   </svg>
-                  Edit
-                </Link>
-                <button onClick={() => setShowDeleteModal(true)} className="delete-btn">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                  </svg>
-                  Delete
-                </button>
+                  {post.viewCount} views
+                </span>
               </div>
+
+              {post.tags && post.tags.length > 0 && (
+                <div className="article-tags">
+                  {post.tags.map((tag) => (
+                    <span key={tag.id} className="tag">#{tag.name}</span>
+                  ))}
+                </div>
+              )}
+            </header>
+
+            {/* 이미지 갤러리 */}
+            {images.length > 0 && (
+              <div className="post-images-gallery">
+                <div className="images-grid">
+                  {images.map((image) => (
+                    <div 
+                      key={image.id} 
+                      className="gallery-item"
+                      onClick={() => setSelectedImage(image)}
+                    >
+                      <img
+                        src={imageApi.getImageUrl(id, image.id)}
+                        alt={image.originalFileName}
+                        loading="lazy"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Post Content (ref 추가) */}
+            <div className="article-content" ref={contentRef}>
+              <MarkdownViewer content={post.content} />
             </div>
-          </footer>
-        </article>
+
+            {/* Post Actions */}
+            <footer className="article-footer">
+              <div className="action-buttons">
+                <button 
+                  className={`like-button ${likeInfo.isLiked ? 'liked' : ''}`}
+                  onClick={handleLikeToggle}
+                >
+                  <span className="heart-icon">{likeInfo.isLiked ? '❤️' : '🤍'}</span>
+                  <span className="like-count">{likeInfo.likeCount}</span>
+                </button>
+                
+                <div className="right-buttons">
+                  <Link to={`/edit/${post.id}`} className="edit-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    Edit
+                  </Link>
+                  <button onClick={() => setShowDeleteModal(true)} className="delete-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </footer>
+          </article>
+        </div>
 
         {/* Comments Section */}
         <section className="comments-section">
           <h2 className="comments-title">댓글 {comments.length}</h2>
           
-          {/* Comment Form */}
           <form onSubmit={handleCommentSubmit} className="comment-form">
             <input
               type="text"
@@ -305,7 +383,6 @@ function PostDetail() {
             <button type="submit" className="comment-submit-btn">댓글 작성</button>
           </form>
 
-          {/* Comments List */}
           <div className="comments-list">
             {comments.map((comment) => (
               <div key={comment.id} className="comment-item">
@@ -344,7 +421,7 @@ function PostDetail() {
         </div>
       )}
 
-      {/* ✅ 이미지 확대 모달 */}
+      {/* 이미지 확대 모달 */}
       {selectedImage && (
         <div className="image-modal-overlay" onClick={() => setSelectedImage(null)}>
           <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>

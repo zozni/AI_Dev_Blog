@@ -1,10 +1,7 @@
 package com.aiblog.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -16,7 +13,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "posts")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -39,7 +37,7 @@ public class Post {
     @JoinColumn(name = "category_id")
     private Category category;
     
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
         name = "post_tags",
         joinColumns = @JoinColumn(name = "post_id"),
@@ -68,9 +66,22 @@ public class Post {
     @Builder.Default
     private List<PostLike> likes = new ArrayList<>();
 
-    // ✅ 새로 추가: 이미지 관계
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("displayOrder ASC")
     @Builder.Default
     private List<PostImage> images = new ArrayList<>();
+    
+    // ✅ hashCode와 equals는 id만 사용 (연관관계 필드 제외)
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Post)) return false;
+        Post post = (Post) o;
+        return id != null && id.equals(post.id);
+    }
+    
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+// 환경에 따라 자동으로 백엔드 주소 설정
+const API_BASE_URL = process.env.REACT_APP_API_URL || 
+                     `http://${window.location.hostname}:8080/api`;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -31,6 +33,7 @@ export const categoryApi = {
 
 export const tagApi = {
   getAllTags: () => api.get('/tags'),
+  getTagCloud: () => api.get('/tags/cloud'),
 };
 
 // 댓글 API
@@ -46,9 +49,8 @@ export const likeApi = {
   toggleLike: (postId) => api.post(`/posts/${postId}/likes`),
 };
 
-// ✅ 이미지 API 추가
+// 이미지 API
 export const imageApi = {
-  // 이미지 업로드
   uploadImage: (postId, file, displayOrder = 0) => {
     const formData = new FormData();
     formData.append('file', file);
@@ -61,16 +63,22 @@ export const imageApi = {
     });
   },
   
-  // 이미지 조회 (URL 반환)
   getImageUrl: (postId, imageId) => {
     return `${API_BASE_URL}/posts/${postId}/images/${imageId}`;
   },
   
-  // 게시글의 모든 이미지 정보 조회
   getPostImages: (postId) => api.get(`/posts/${postId}/images`),
   
-  // 이미지 삭제
   deleteImage: (postId, imageId) => api.delete(`/posts/${postId}/images/${imageId}`),
+};
+
+// 워드클라우드 API 추가
+export const wordCloudApi = {
+  // 워드클라우드 이미지 URL
+  getImageUrl: () => `${API_BASE_URL}/wordcloud/image?t=${Date.now()}`,
+  
+  // 워드클라우드 수동 재생성
+  generate: () => api.post('/wordcloud/generate'),
 };
 
 export default api;
