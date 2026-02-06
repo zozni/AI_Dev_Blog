@@ -33,6 +33,9 @@ AI 관련 학습 내용을 체계적으로 정리하고 공유하기 위한 개�
 
 ## 🛠️ 기술 스택
 
+### AI
+- 추가 예정
+
 ### Backend
 - **Spring Boot 3.2** - RESTful API 서버
 - **Spring Data JPA** - ORM 및 데이터 접근 계층
@@ -55,6 +58,9 @@ AI 관련 학습 내용을 체계적으로 정리하고 공유하기 위한 개�
 
 ```
 ai_blog/
+│ 
+├── ai/                       # ai endpoint python
+│ 
 ├── backend/                        # Spring Boot 백엔드
 │   ├── src/main/java/com/aiblog/
 │   │   ├── model/                  # Entity (Post, Category, Tag, Comment, PostLike)

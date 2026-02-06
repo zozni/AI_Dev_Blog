@@ -12,11 +12,11 @@ def fetch_tags_from_api(api_url="http://localhost:8080/api/tags/cloud"):
         response.raise_for_status()
         return response.json()
     except Exception as e:
-        print(f"API 호출 실패: {e}")
+        print(f"API 호출 실패: {e}")    
         sys.exit(1)
 
 def generate_word_cloud(tags_data, output_path="output/tag_cloud.png"):
-    """태그 데이터로 워드클라우드 생성"""
+    """태그 데이터로 워드클라우드 생성"""          
     
     # 태그 이름과 게시글 수를 딕셔너리로 변환
     word_freq = {tag['name']: tag['postCount'] for tag in tags_data}
